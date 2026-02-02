@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DUCK N GOOSE CHRONICLES</title>
+
+<style>
+:root{
+  --bg:#0b0b12;
+  --text:#f3f3ff;
+  --muted:#b9b9d6;
+  --accent:#ffd36e;
+  --accent2:#8ee6ff;
+  --line:rgba(255,255,255,.12);
+  --card:rgba(20,20,39,.85);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  background:
+    radial-gradient(1200px 800px at 20% 10%, rgba(255,211,110,.15), transparent 60%),
+    radial-gradient(900px 700px at 80% 30%, rgba(142,230,255,.15), transparent 55%),
+    var(--bg);
+  color:var(--text);
+}
+header,main{max-width:980px;margin:auto;padding:20px}
+header{padding-top:56px;padding-bottom:10px;text-align:center}
+h1{
+  margin:0;
+  font-size:clamp(44px, 6vw, 72px);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.subtitle{
+  margin-top:10px;
+  font-size:18px;
+  color:var(--muted);
+}
+.kicker{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.6;
+}
+nav{margin-top:16px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+button, a.pill{
+  background:rgba(255,255,255,.08);
+  color:var(--text);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:10px 16px;
+  cursor:pointer;
+  font-weight:700;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+button:hover, a.pill:hover{transform:translateY(-1px)}
+button:active, a.pill:active{transform:translateY(0)}
+button.primary{
+  background:linear-gradient(90deg, rgba(255,211,110,.30), rgba(142,230,255,.28));
+  border:none;
+}
+
+main{padding-top:10px}
+section{
+  margin:26px 0 34px;
+  padding:18px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:rgba(255,255,255,.05);
+}
+h2{margin:0 0 10px;font-size:22px}
+p{margin:0 0 12px;color:var(--muted);line-height:1.65}
+
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.chip{
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:10px 12px;
+  background:rgba(255,255,255,.05);
+  color:var(--text);
+  font-weight:700;
+}
+.chip span{color:var(--muted);font-weight:700}
+
+.era{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  margin-bottom:12px;
+  background:rgba(255,255,255,.05);
+}
+.era .left{display:flex;flex-direction:column;gap:2px}
+.era .name{font-weight:800}
+.era .desc{color:var(--muted);font-size:13px}
+
+.panel{
+  display:none;
+  margin-top:16px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:16px;
+  background:var(--card);
+}
+.panel h3{margin:0 0 6px}
+.panel .text{margin:0 0 14px}
+
+/* ===== Consistent photo frame + fade ===== */
+.frame{
+  width:100%;
+  height:520px;           /* tweak: 360 (shorter) or 480 (taller) */
+  overflow:hidden;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+}
+.frame img{
+  width:100%;
+  height:100%;
+  display:block;
+  opacity:1;
+  transition: opacity 0.45s ease;
+  object-position: center;
+}
+
+.fade-out{opacity:0}
+
+.grid{
+  display:grid;
+  gap:14px;
+}
+@media(min-width:900px){
+  .grid.two{grid-template-columns: 1.1fr .9fr;}
+}
+
+.map{
+  border-radius:18px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.03);
+  padding:10px;
+  overflow:hidden;
+}
+svg{width:100%;height:auto;display:block}
+.legend{
+  margin-top:10px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  color:var(--muted);
+  font-size:13px;
+}
+.key{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:rgba(255,255,255,.04);
+}
+.keydot{width:10px;height:10px;border-radius:50%}
+.keydot.you{background:var(--accent)}
+.keydot.her{background:var(--accent2)}
+
+.card{
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  background:rgba(255,255,255,.04);
+}
+.card h3{margin:0 0 10px;font-size:16px}
+.mono{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  color:rgba(255,255,255,.9);
+  line-height:1.7;
+}
+.video{display:none;margin-top:12px}
+video{width:100%;border-radius:18px;border:1px solid var(--line)}
+.smallbtn{margin-top:12px}
+.toast{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  background:rgba(20,20,39,.92);
+  border:1px solid rgba(255,255,255,.14);
+  padding:10px 14px;border-radius:999px;
+  color:var(--muted);font-size:13px;
+  display:none;max-width:calc(100vw - 28px);
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>DUCK N GOOSE</h1>
+  <div class="subtitle">hbd duck ;)</div>
+  <div class="kicker">hit the button for some sweet tunes!</div>
+
+  <nav>
+    <button id="startBtn" class="primary">▶ Start</button>
+    <button id="muteBtn">🔊 Sound: on</button>
+    <a class="pill" href="#eras">🗓️ Eras</a>
+    <a class="pill" href="#chapter">🌍 Next chapter</a>
+    <a class="pill" href="#finale">💛 Finale</a>
+  </nav>
+</header>
+
+<main>
+
+<section id="eras">
+  <h2>Our eras</h2>
+  <p>Click an era. Then click through the photos.</p>
+
+  <div class="era">
+    <div class="left">
+      <div class="name">Childhood</div>
+      <div class="desc">origin story big dawg</div>
+    </div>
+    <button onclick="openEra(0)">Open</button>
+  </div>
+
+  <div class="era">
+    <div class="left">
+      <div class="name">Hometown</div>
+      <div class="desc">ave, laudy, miami… legendary</div>
+    </div>
+    <button onclick="openEra(1)">Open</button>
+  </div>
+
+  <div class="era">
+    <div class="left">
+      <div class="name">Travel</div>
+      <div class="desc">friendship abroad ✔</div>
+    </div>
+    <button onclick="openEra(2)">Open</button>
+  </div>
+
+  <div id="panel" class="panel" aria-live="polite">
+    <h3 id="eraTitle"></h3>
+    <p id="eraText" class="text"></p>
+
+    <div class="frame">
+      <img id="eraImg" alt="Era photo">
+    </div>
+
+    <div class="row">
+      <button class="smallbtn" onclick="nextPhoto()">Next photo →</button>
+      <button class="smallbtn" onclick="closePanel()">Close</button>
+    </div>
+  </div>
+</section>
+
+<section id="chapter">
+  <h2>Next chapter</h2>
+  <p>Two time zones. Same friendship. New coordinates pending.</p>
+
+  <div class="grid two">
+    <div class="card">
+      <h3>Right now</h3>
+      <div class="row" style="margin-top:10px;">
+        <div class="chip">Orlando: <span id="youTime">--:--</span></div>
+        <div class="chip">Barcelona: <span id="herTime">--:--</span></div>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <div class="chip">Distance: <span id="distance">--</span></div>
+      </div>
+
+      <h3 style="margin-top:16px;">Next chapter</h3>
+      <div class="mono">
+        Location — TBD ✈️<br>
+        Date — TBD 🗓️<br>
+        Us — confirmed ✅
+      </div>
+
+      <p style="margin-top:12px;">We don’t have the plan yet. We have the friendship.</p>
+    </div>
+
+    <div class="map">
+      <svg viewBox="0 0 900 450" aria-label="Simple world map">
+        <path d="M55,280 C110,220 190,230 250,250 C320,275 370,260 420,240 C470,220 520,210 580,230 C650,255 700,250 770,220 C820,200 860,200 890,220 L890,420 L55,420 Z"
+              fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.12)" stroke-width="2"/>
+        <path d="M70,200 C120,140 220,150 280,170 C330,185 360,170 400,150 C440,130 520,120 590,150 C660,185 740,170 820,140"
+              fill="none" stroke="rgba(255,255,255,.12)" stroke-width="2"/>
+
+        <path id="line" d="" fill="none" stroke="rgba(255,211,110,.60)" stroke-width="3" stroke-dasharray="8 10"/>
+
+        <circle id="youPin" cx="200" cy="220" r="8" fill="rgba(255,211,110,.95)"/>
+        <circle id="herPin" cx="650" cy="200" r="8" fill="rgba(142,230,255,.95)"/>
+
+        <text id="youLabel" x="214" y="224" fill="rgba(255,255,255,.88)" font-size="16">Orlando</text>
+        <text id="herLabel" x="664" y="204" fill="rgba(255,255,255,.88)" font-size="16">Barcelona</text>
+      </svg>
+
+      <div class="legend">
+        <div class="key"><span class="keydot you"></span> kass</div>
+        <div class="key"><span class="keydot her"></span> sunny</div>
+        <div class="key">dashed line = still connected</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="finale">
+  <h2>Finale</h2>
+  <p>
+    Happy birthday message + pics. Highlight reel button works later when you add the video.
+  </p>
+
+  <div class="card">
+    <h3>Message</h3>
+    <p style="margin:0;color:var(--muted);line-height:1.7;">
+      Happy birthday, Sun! The whipped cream to my guacamole. We have lived a lot of life together and even though there’s a lil distance between us, our friendship is still top tier. No matter the time or the place, we’ll always be life long best friends. Have an epic birthday, and I’m counting down the days til we reunite : )
+      <br><br>
+      Love you twin,<br>
+      Kass
+      <br><br>
+      ps click this button for our highlight reel.
+    </p>
+
+    <div class="frame" style="margin-top:14px;">
+      <img id="mainImg" alt="Main birthday pic">
+    </div>
+
+    <div class="row">
+      <button class="smallbtn" onclick="nextMainPic()">Next photo →</button>
+      <button class="smallbtn primary" onclick="playMontage()">🎬 Highlight reel</button>
+    </div>
+
+    <div class="video" id="videoWrap">
+      <video id="montage" controls playsinline>
+        <source src="media/montage.mp4" type="video/mp4">
+        Your browser can’t play this video.
+      </video>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="toast" id="toast">✨ Click Start to enable sound</div>
+
+<audio id="song" preload="auto">
+  <source src="media/unwritten.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* ====== SETTINGS (Orlando ↔ Barcelona) ====== */
+const YOU_TZ = "America/New_York";
+const HER_TZ = "Europe/Madrid";
+const YOU_COORD = { lat: 28.5383, lon: -81.3792 }; // Orlando
+const HER_COORD = { lat: 41.3851, lon: 2.1734 };   // Barcelona
+
+/* ====== FILE LISTS (MATCHES YOUR FOLDERS EXACTLY) ====== */
+const eras = [
+  {
+    title:"Childhood",
+    text:"Quick throwback thursday! our origin story big dawg. I knew from day one that we were gonna be best friends forever. s/o to that wasp!",
+    imgs:[
+      "photos/childhood1.jpeg",
+      "photos/childhood2.jpeg",
+      "photos/childhood3.jpeg",
+      "photos/childhood4.jpeg"
+    ]
+  },
+  {
+    title:"Hometown",
+    text:"Our legendary era: ave, laudy, miami! no hands by wacka flocka flame, tailgates to obrians, runs to the store and so much more. My favorite part of it all was getting to spend it with you.",
+    imgs:[
+      "photos/hometown1.jpeg","photos/hometown2.jpeg","photos/hometown3.jpeg","photos/hometown4.jpeg",
+      "photos/hometown5.jpeg","photos/hometown6.jpeg","photos/hometown7.jpeg","photos/hometown8.jpeg",
+      "photos/hometown9.jpeg","photos/hometown10.jpeg","photos/hometown11.JPG","photos/hometown12.jpeg",
+      "photos/hometown13.jpeg","photos/hometown14.jpeg",
+      "photos/hometown16.jpeg",
+      "photos/hometown17.JPG","photos/hometown18.JPG","photos/hometown19.JPG",
+      "photos/hometown20.jpeg","photos/hometown21.jpeg","photos/hometown22.jpeg","photos/hometown23.jpeg",
+      "photos/hometown24.jpeg","photos/hometown25.jpeg","photos/hometown26.jpeg"
+    ]
+  },
+  {
+    title:"Travel",
+    text:"Taking our friendship abroad! checking off our childhood bucket list. Living the dream with my lifelong best friend <3 cheers to many more adventures in the coming years!",
+    imgs:[
+      "photos/travel1.jpeg","photos/travel2.jpeg","photos/travel3.jpeg","photos/travel4.jpeg","photos/travel5.jpeg",
+      "photos/travel6.jpeg","photos/travel7.jpeg","photos/travel8.jpeg","photos/travel9.jpeg","photos/travel10.jpeg",
+      "photos/travel11.jpeg","photos/travel12.jpeg","photos/travel13.JPG","photos/travel14.JPG","photos/travel15.jpeg"
+    ]
+  }
+];
+
+const mainPics = [
+  "photos/mainpic1.jpeg",
+  "photos/mainpic2.jpeg",
+  "photos/mainpic3.jpeg",
+  "photos/mainpic4.jpeg"
+];
+
+/* ====== TOAST ====== */
+const toast = document.getElementById("toast");
+function showToast(msg){
+  toast.textContent = msg;
+  toast.style.display = "block";
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=> toast.style.display = "none", 2400);
+}
+setTimeout(()=>showToast("Click Start to enable sound"), 900);
+
+/* ====== FADE SWAP HELPER ====== */
+function swapWithFade(imgEl, newSrc){
+  imgEl.classList.add("fade-out");
+
+  setTimeout(() => {
+    imgEl.onload = () => {
+      const isVertical = imgEl.naturalHeight > imgEl.naturalWidth;
+
+      if (isVertical){
+        imgEl.style.objectFit = "contain";
+        imgEl.style.background = "rgba(0,0,0,0.35)";
+      } else {
+        imgEl.style.objectFit = "cover";
+        imgEl.style.background = "transparent";
+      }
+
+      requestAnimationFrame(() => imgEl.classList.remove("fade-out"));
+    };
+
+    imgEl.onerror = () => {
+      imgEl.classList.remove("fade-out");
+      alert("Couldn’t find: " + newSrc + "\nCheck filename + extension in your photos/ folder.");
+    };
+
+    imgEl.src = newSrc;
+  }, 180);
+}
+
+/* ====== ERAS ====== */
+let eraIndex = 0;
+let photoIndex = 0;
+
+const panel = document.getElementById("panel");
+const eraTitle = document.getElementById("eraTitle");
+const eraText  = document.getElementById("eraText");
+const eraImg   = document.getElementById("eraImg");
+
+function openEra(i){
+  eraIndex = i;
+  photoIndex = 0;
+
+  eraTitle.textContent = eras[i].title;
+  eraText.textContent  = eras[i].text;
+
+  panel.style.display = "block";
+  swapWithFade(eraImg, eras[i].imgs[0]);
+  panel.scrollIntoView({behavior:"smooth", block:"start"});
+}
+function nextPhoto(){
+  photoIndex = (photoIndex + 1) % eras[eraIndex].imgs.length;
+  swapWithFade(eraImg, eras[eraIndex].imgs[photoIndex]);
+}
+function closePanel(){
+  panel.style.display = "none";
+}
+
+/* ====== MAIN PICS ====== */
+let mainIndex = 0;
+const mainImg = document.getElementById("mainImg");
+swapWithFade(mainImg, mainPics[0]);
+function nextMainPic(){
+  mainIndex = (mainIndex + 1) % mainPics.length;
+  swapWithFade(mainImg, mainPics[mainIndex]);
+}
+
+/* ====== AUDIO ====== */
+const song = document.getElementById("song");
+const muteBtn = document.getElementById("muteBtn");
+document.getElementById("startBtn").onclick = () => {
+  song.play().then(()=>{
+    muteBtn.textContent = "🔊 Sound: on";
+  }).catch(() => alert("If music isn’t playing, double-check: media/unwritten.mp3"));
+};
+muteBtn.onclick = () => {
+  if (song.paused){
+    song.play().catch(()=>{});
+    muteBtn.textContent = "🔊 Sound: on";
+  } else {
+    song.pause();
+    muteBtn.textContent = "🔇 Sound: off";
+  }
+};
+
+/* ====== CLOCKS ====== */
+function tick(){
+  document.getElementById("youTime").textContent =
+    new Date().toLocaleTimeString("en-US",{timeZone:YOU_TZ, hour:"2-digit", minute:"2-digit"});
+  document.getElementById("herTime").textContent =
+    new Date().toLocaleTimeString("en-US",{timeZone:HER_TZ, hour:"2-digit", minute:"2-digit"});
+}
+tick();
+setInterval(tick, 10000);
+
+/* ====== DISTANCE + MAP PINS ====== */
+function toRad(d){ return d * Math.PI / 180; }
+function haversineKm(a,b){
+  const R = 6371;
+  const dLat = toRad(b.lat - a.lat);
+  const dLon = toRad(b.lon - a.lon);
+  const lat1 = toRad(a.lat);
+  const lat2 = toRad(b.lat);
+  const s = Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
+  const c = 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1-s));
+  return R * c;
+}
+const km = haversineKm(YOU_COORD, HER_COORD);
+const miles = km * 0.621371;
+document.getElementById("distance").textContent =
+  `${Math.round(miles).toLocaleString()} miles (${Math.round(km).toLocaleString()} km)`;
+
+function lonToX(lon){ return (lon + 180) / 360 * 900; }
+function latToY(lat){ return (90 - lat) / 180 * 450; }
+
+const youX = lonToX(YOU_COORD.lon), youY = latToY(YOU_COORD.lat);
+const herX = lonToX(HER_COORD.lon), herY = latToY(HER_COORD.lat);
+
+document.getElementById("youPin").setAttribute("cx", youX);
+document.getElementById("youPin").setAttribute("cy", youY);
+document.getElementById("herPin").setAttribute("cx", herX);
+document.getElementById("herPin").setAttribute("cy", herY);
+
+document.getElementById("youLabel").setAttribute("x", youX + 14);
+document.getElementById("youLabel").setAttribute("y", youY + 5);
+document.getElementById("herLabel").setAttribute("x", herX + 14);
+document.getElementById("herLabel").setAttribute("y", herY + 5);
+
+document.getElementById("line").setAttribute(
+  "d",
+  `M ${youX} ${youY} Q ${(youX+herX)/2} ${Math.min(youY,herY)-60} ${herX} ${herY}`
+);
+
+/* ====== MONTAGE (SAFE IF YOU DON'T HAVE IT YET) ====== */
+function playMontage(){
+  const wrap = document.getElementById("videoWrap");
+  const v = document.getElementById("montage");
+  wrap.style.display = "block";
+
+  const p = v.play();
+  if (p) p.catch(() => {
+    alert("No highlight reel yet — add media/montage.mp4 when you're ready.");
+  });
+}
+</script>
+
+</body>
+</html>
